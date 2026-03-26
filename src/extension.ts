@@ -163,6 +163,42 @@ function registerCommands(context: vscode.ExtensionContext) {
             }
         })
     );
+
+    // 切换自动翻页
+    context.subscriptions.push(
+        vscode.commands.registerCommand('txtReader.toggleAutoPage', async () => {
+            if (!statusBarManager) {
+                return;
+            }
+
+            const config = vscode.workspace.getConfiguration('txtReader');
+            const currentInterval = config.get<number>('autoPageInterval', 0);
+            
+            if (currentInterval > 0) {
+                // 当前已启用，关闭自动翻页
+                await config.update('autoPageInterval', 0, vscode.ConfigurationTarget.Global);
+                vscode.window.showInformationMessage('自动翻页已关闭');
+            } else {
+                // 当前已禁用，打开自动翻页（让用户选择间隔）
+                const intervalOptions = [
+                    { label: '1 秒', interval: 1000 },
+                    { label: '2 秒', interval: 2000 },
+                    { label: '3 秒', interval: 3000 },
+                    { label: '5 秒', interval: 5000 },
+                    { label: '10 秒', interval: 10000 }
+                ];
+
+                const selected = await vscode.window.showQuickPick(intervalOptions, {
+                    placeHolder: '请选择自动翻页间隔'
+                });
+
+                if (selected) {
+                    await config.update('autoPageInterval', selected.interval, vscode.ConfigurationTarget.Global);
+                    vscode.window.showInformationMessage(`自动翻页已开启，间隔：${selected.label}`);
+                }
+            }
+        })
+    );
 }
 
 /**

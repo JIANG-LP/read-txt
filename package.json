@@ -43,6 +43,10 @@
       {
         "command": "txtReader.nextLine",
         "title": "TXT Reader: 下一行"
+      },
+      {
+        "command": "txtReader.toggleAutoPage",
+        "title": "TXT Reader: 切换自动翻页"
       }
     ],
     "keybindings": [
@@ -54,14 +58,14 @@
       },
       {
         "command": "txtReader.previousLine",
-        "key": "ctrl+shift+left",
-        "mac": "cmd+shift+left",
+        "key": "ctrl+shift+z",
+        "mac": "cmd+shift+z",
         "when": "editorTextFocus"
       },
       {
         "command": "txtReader.nextLine",
-        "key": "ctrl+shift+right",
-        "mac": "cmd+shift+right",
+        "key": "ctrl+shift+x",
+        "mac": "cmd+shift+x",
         "when": "editorTextFocus"
       }
     ],
@@ -77,6 +81,11 @@
           "type": "number",
           "default": 0,
           "description": "自动刷新间隔（毫秒），0 表示不自动刷新"
+        },
+        "txtReader.autoPageInterval": {
+          "type": "number",
+          "default": 0,
+          "description": "自动翻页时间间隔（毫秒），0 表示禁用自动翻页"
         }
       }
     }

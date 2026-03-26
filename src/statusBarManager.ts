@@ -11,6 +11,8 @@ export class StatusBarManager {
     private previousButton: vscode.StatusBarItem | undefined;
     private nextButton: vscode.StatusBarItem | undefined;
     private visible: boolean = false;
+    private autoPageTimer: NodeJS.Timeout | undefined;
+    private autoPageEnabled: boolean = false;
 
     constructor(context: vscode.ExtensionContext) {
         // 创建主文本显示项
@@ -48,6 +50,18 @@ export class StatusBarManager {
             this.previousButton,
             this.nextButton
         );
+        
+        // 监听配置变化
+        context.subscriptions.push(
+            vscode.workspace.onDidChangeConfiguration(e => {
+                if (e.affectsConfiguration('txtReader.autoPageInterval')) {
+                    this.updateAutoPageSetting();
+                }
+            })
+        );
+        
+        // 初始化自动翻页设置
+        this.updateAutoPageSetting();
     }
 
     /**
@@ -86,6 +100,11 @@ export class StatusBarManager {
         this.nextButton?.show();
         this.visible = true;
         this.updateDisplay();
+        
+        // 如果启用了自动翻页，启动定时器
+        if (this.autoPageEnabled) {
+            this.startAutoPage();
+        }
     }
 
     /**
@@ -96,6 +115,9 @@ export class StatusBarManager {
         this.previousButton?.hide();
         this.nextButton?.hide();
         this.visible = false;
+        
+        // 隐藏时停止自动翻页
+        this.stopAutoPage();
     }
 
     /**
@@ -134,6 +156,11 @@ export class StatusBarManager {
         if (line !== undefined) {
             this.updateDisplay();
             this.showStatusMessage(`第 ${this.txtReader.getCurrentIndex()} / ${this.txtReader.getTotalLines()} 行`);
+            
+            // 如果启用了自动翻页，重置定时器（避免在手动切换时立即触发自动翻页）
+            if (this.autoPageEnabled) {
+                this.resetAutoPageTimer();
+            }
         }
     }
 
@@ -202,8 +229,66 @@ export class StatusBarManager {
      * 清理资源
      */
     public dispose(): void {
+        this.stopAutoPage(); // 停止自动翻页
         this.txtReader.dispose();
         this.hide();
+    }
+
+    /**
+     * 更新自动翻页设置
+     */
+    private updateAutoPageSetting(): void {
+        const config = vscode.workspace.getConfiguration('txtReader');
+        const interval = config.get<number>('autoPageInterval', 0);
+        
+        this.autoPageEnabled = interval > 0;
+        
+        if (this.autoPageEnabled && this.visible) {
+            this.startAutoPage(interval);
+        } else {
+            this.stopAutoPage();
+        }
+    }
+
+    /**
+     * 启动自动翻页
+     * @param interval 翻页间隔（毫秒）
+     */
+    private startAutoPage(interval?: number): void {
+        this.stopAutoPage(); // 先停止现有的定时器
+        
+        if (!interval) {
+            const config = vscode.workspace.getConfiguration('txtReader');
+            interval = config.get<number>('autoPageInterval', 0);
+        }
+        
+        if (interval && interval > 0 && this.visible) {
+            this.autoPageTimer = setInterval(() => {
+                this.nextLine();
+            }, interval);
+            
+            console.log(`自动翻页已启动，间隔：${interval}ms`);
+        }
+    }
+
+    /**
+     * 重置自动翻页定时器
+     */
+    private resetAutoPageTimer(): void {
+        if (this.autoPageEnabled) {
+            this.startAutoPage();
+        }
+    }
+
+    /**
+     * 停止自动翻页
+     */
+    private stopAutoPage(): void {
+        if (this.autoPageTimer) {
+            clearInterval(this.autoPageTimer);
+            this.autoPageTimer = undefined;
+            console.log('自动翻页已停止');
+        }
     }
 }
 
