@@ -1,0 +1,102 @@
+{
+  "name": "txt-status-bar-reader",
+  "displayName": "TXT Status Bar Reader",
+  "description": "在 VSCode 状态栏中显示 TXT 文件内容，支持逐行切换和快捷键控制",
+  "version": "1.0.0",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "txtReader.showStatus",
+        "title": "TXT Reader: 显示状态栏"
+      },
+      {
+        "command": "txtReader.hideStatus",
+        "title": "TXT Reader: 隐藏状态栏"
+      },
+      {
+        "command": "txtReader.toggleStatus",
+        "title": "TXT Reader: 切换显示/隐藏"
+      },
+      {
+        "command": "txtReader.selectFile",
+        "title": "TXT Reader: 选择 TXT 文件"
+      },
+      {
+        "command": "txtReader.selectEncoding",
+        "title": "TXT Reader: 手动选择编码"
+      },
+      {
+        "command": "txtReader.previousLine",
+        "title": "TXT Reader: 上一行"
+      },
+      {
+        "command": "txtReader.nextLine",
+        "title": "TXT Reader: 下一行"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "txtReader.toggleStatus",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "txtReader.previousLine",
+        "key": "ctrl+shift+left",
+        "mac": "cmd+shift+left",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "txtReader.nextLine",
+        "key": "ctrl+shift+right",
+        "mac": "cmd+shift+right",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "TXT Status Bar Reader",
+      "properties": {
+        "txtReader.filePath": {
+          "type": "string",
+          "default": "",
+          "description": "要读取的 TXT 文件路径"
+        },
+        "txtReader.refreshInterval": {
+          "type": "number",
+          "default": 0,
+          "description": "自动刷新间隔（毫秒），0 表示不自动刷新"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "@types/iconv-lite": "^0.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
