@@ -170,16 +170,8 @@ export class StatusBarManager {
     private updateDisplay(): void {
         const currentLine = this.txtReader.getCurrentLine();
         if (currentLine !== undefined) {
-            // 限制显示长度，避免状态栏过长
-            const maxLength = 50;
-            let displayText = currentLine;
-            
-            if (displayText.length > maxLength) {
-                displayText = displayText.substring(0, maxLength - 3) + '...';
-            }
-
-            // 使用文档图标前缀
-            this.statusBarItem.text = `$(file-text) ${displayText}`;
+            // 使用文档图标前缀（数据层已按字符数分行，无需再限制长度）
+            this.statusBarItem.text = `$(file-text) ${currentLine}`;
         } else {
             this.statusBarItem.text = '$(file-text) 无内容';
         }

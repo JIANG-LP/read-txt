@@ -55,6 +55,22 @@ export class TxtFileReader {
         this.readFileWithEncodingDetection();
         this.setupFileWatcher();
         this.setupAutoRefresh();
+        this.setupConfigListener(); // 监听配置变化
+    }
+
+    /**
+     * 监听配置变化（charsPerLine）
+     */
+    private setupConfigListener(): void {
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('txtReader.charsPerLine')) {
+                console.log('检测到 charsPerLine 配置变化，重新加载文件');
+                // 配置变化时重新加载文件以应用新的分行设置
+                if (this.filePath && fs.existsSync(this.filePath)) {
+                    this.readFileWithEncodingDetection();
+                }
+            }
+        });
     }
 
     /**
@@ -135,7 +151,13 @@ export class TxtFileReader {
      */
     private parseContent(content: string): void {
         // 按行分割，过滤掉空行
-        this.lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+        const rawLines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+        
+        // 获取配置的每行字符数
+        const charsPerLine = vscode.workspace.getConfiguration('txtReader').get<number>('charsPerLine', 30);
+        
+        // 将长行按字符数分割成多行
+        this.lines = this.splitLongLines(rawLines, charsPerLine);
         
         if (this.lines.length === 0) {
             this.currentIndex = -1;
@@ -145,7 +167,31 @@ export class TxtFileReader {
         // 重置索引到第一行
         this.currentIndex = 0;
         
-        console.log(`成功读取文件，共 ${this.lines.length} 行，编码：${this.currentEncoding}`);
+        console.log(`成功读取文件，共 ${this.lines.length} 行（按每行${charsPerLine}字分割），编码：${this.currentEncoding}`);
+    }
+
+    /**
+     * 将超长行按字符数分割
+     * @param lines 原始行数组
+     * @param charsPerLine 每行字符数
+     * @returns 分割后的行数组
+     */
+    private splitLongLines(lines: string[], charsPerLine: number): string[] {
+        const result: string[] = [];
+        
+        for (const line of lines) {
+            if (line.length <= charsPerLine) {
+                // 不超过限制，直接添加
+                result.push(line);
+            } else {
+                // 超过限制，按字符数分割
+                for (let i = 0; i < line.length; i += charsPerLine) {
+                    result.push(line.slice(i, i + charsPerLine));
+                }
+            }
+        }
+        
+        return result;
     }
 
     /**
