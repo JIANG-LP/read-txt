@@ -3,7 +3,7 @@
   "displayName": "TXT Status Bar Reader",
   "description": "在 VSCode 状态栏中显示 TXT 文件内容，支持逐行切换和快捷键控制",
   "version": "1.0.0",
-  "publisher": "your-publisher-name",
+  "publisher": "read-txt",
   "engines": {
     "vscode": "^1.74.0"
   },
