@@ -52,8 +52,8 @@
     "keybindings": [
       {
         "command": "txtReader.toggleStatus",
-        "key": "ctrl+shift+t",
-        "mac": "cmd+shift+t",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
         "when": "editorTextFocus"
       },
       {
