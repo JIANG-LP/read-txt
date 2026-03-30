@@ -1,9 +1,14 @@
 {
-  "name": "txt-status-bar-reader",
+  "name": "read-txt",
   "displayName": "TXT Status Bar Reader",
   "description": "在 VSCode 状态栏中显示 TXT 文件内容，支持逐行切换和快捷键控制",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "publisher": "read-txt",
+  "icon": "src/images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JIANG-LP/read-txt.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -74,7 +79,7 @@
       }
     ],
     "configuration": {
-      "title": "TXT Status Bar Reader",
+      "title": "TXT Reader",
       "properties": {
         "txtReader.filePath": {
           "type": "string",

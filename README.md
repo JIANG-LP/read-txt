@@ -7,32 +7,19 @@
 - ✅ **状态栏显示**：在 VSCode 状态栏中显示 TXT 文件内容，每次仅展示一行文本
 - ✅ **左右切换按钮**：通过点击状态栏的左右箭头按钮切换上一行/下一行
 - ✅ **快捷键支持**：提供快捷键快速控制显示/隐藏和行切换
+- ✅ **自动翻页**：支持设置自动翻页，每次翻页间隔可配置
+- ✅ **跳页控制**：通过快捷键快速跳转到指定行
 - ✅ **文件监听**：自动监听文件变化并更新内容
 - ✅ **配置持久化**：记住上次选择的文件路径
 - ✅ **友好提示**：提供详细的状态反馈和错误提示
 - ✅ **跨平台支持**：支持 Windows、macOS、Linux
 - ✅ **多编码支持**：自动检测 UTF-8、GBK、GB2312 等多种编码格式
 
-## 安装
-
-1. 克隆或下载本项目
-2. 在项目目录中运行：
-   ```bash
-   npm install
-   npm run compile
-   ```
-3. 在 VSCode 中按 `F5` 启动扩展开发宿主进行测试
-4. 打包发布（可选）：
-   ```bash
-   npm install -g vsce
-   vsce package
-   ```
-
 ## 使用方法
 
 ### 首次使用
 
-1. 激活插件后，按下快捷键 `Ctrl+Shift+T` (Mac: `Cmd+Shift+T`)
+1. 激活插件后，按下快捷键 `Ctrl+Shift+C` (Mac: `Cmd+Shift+C`)
 2. 系统会弹出文件选择对话框
 3. 选择要读取的 `.txt` 文件
 4. 文件加载后，状态栏会显示第一行内容
@@ -40,17 +27,30 @@
 ### 基本操作
 
 #### 显示/隐藏
-- **快捷键**：`Ctrl+Shift+T` (Mac: `Cmd+Shift+T`)
+- **快捷键**：`Ctrl+Shift+C` (Mac: `Cmd+Shift+C`)
 - **命令面板**：`TXT Reader: 切换显示/隐藏`
 
 #### 切换行
 - **上一行**：
   - 点击状态栏左侧的 `← 上一行` 按钮
-  - 快捷键：`Ctrl+Shift+Left` (Mac: `Cmd+Shift+Left`)
+  - 快捷键：`Ctrl+Shift+Z` (Mac: `Cmd+Shift+Z`)
   
 - **下一行**：
   - 点击状态栏右侧的 `下一行 →` 按钮
-  - 快捷键：`Ctrl+Shift+Right` (Mac: `Cmd+Shift+Right`)
+  - 快捷键：`Ctrl+Shift+X` (Mac: `Cmd+Shift+X`)
+
+### 自动翻页
+
+1. 按 `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`) 打开命令面板
+2. 输入 `TXT Reader: 切换自动翻页` 并回车
+3. 如果是首次使用，选择一个翻页间隔（1 秒、2 秒、3 秒、5 秒、10 秒）
+4. 如果已经启用，会直接关闭自动翻页
+
+### 跳页翻页
+
+1. 按 `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`) 
+2. 输入 `TXT Reader: 跳转到指定行` 并回车
+3. 输入要跳转的行号并回车
 
 #### 选择文件
 - 点击状态栏中的文本区域
@@ -107,50 +107,14 @@
 - 格式：`第 X / Y 行`
 - 显示持续 2 秒
 
-## 开发指南
-
-### 项目结构
-
-```
-read-demo/
-├── src/
-│   ├── extension.ts          # 插件入口
-│   ├── txtFileReader.ts      # 文件读取器
-│   └── statusBarManager.ts   # 状态栏管理器
-├── package.json              # 插件配置
-├── tsconfig.json             # TypeScript 配置
-└── .vscodeignore             # 打包忽略文件
-```
-
-### 构建命令
-
-```bash
-# 编译 TypeScript
-npm run compile
-
-# 监听模式（开发时自动编译）
-npm run watch
-
-# 代码检查
-npm run lint
-```
-
-### 调试
-
-1. 打开项目文件夹
-2. 按 `F5` 启动调试
-3. 在新的 VSCode 窗口中测试插件功能
 
 ## 常见问题
 
 ### Q: 为什么状态栏没有显示？
-A: 确保已经选择了 TXT 文件。按 `Ctrl+Shift+T` 激活插件并选择文件。
+A: 确保已经选择了 TXT 文件。按 `Ctrl+Shift+C` 激活插件并选择文件。
 
 ### Q: 文件更新后内容没有变化？
 A: 插件会自动监听文件变化。如果没有更新，可以尝试重新选择文件。
-
-### Q: 如何修改快捷键？
-A: 在 VSCode 的键盘快捷设置中搜索 `txtReader` 相关命令进行自定义。
 
 ### Q: 支持其他文件格式吗？
 A: 目前仅支持 `.txt` 文件格式。
