@@ -335,6 +335,20 @@ export class TxtFileReader {
     }
 
     /**
+     * 跳转到指定行
+     * @param lineNum 要跳转的行号（从 1 开始）
+     */
+    public jumpToLine(lineNum: number): void {
+        if (lineNum < 1 || lineNum > this.lines.length) {
+            throw new Error(`行号超出范围：${lineNum}，有效范围为 1-${this.lines.length}`);
+        }
+        
+        // 转换为从 0 开始的索引
+        this.currentIndex = lineNum - 1;
+        console.log(`已跳转到第 ${lineNum} 行`);
+    }
+
+    /**
      * 检查是否有加载文件
      */
     public hasFile(): boolean {

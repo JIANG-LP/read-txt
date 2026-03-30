@@ -282,6 +282,42 @@ export class StatusBarManager {
             console.log('自动翻页已停止');
         }
     }
+
+    /**
+     * 跳转到指定行
+     * @param lineNum 要跳转的行号（从 1 开始）
+     */
+    public jumpToLine(lineNum: number): void {
+        if (!this.txtReader.hasFile()) {
+            vscode.window.showWarningMessage('请先选择一个 TXT 文件');
+            return;
+        }
+
+        const totalLines = this.txtReader.getTotalLines();
+        if (lineNum < 1 || lineNum > totalLines) {
+            vscode.window.showErrorMessage(`行号必须在 1 到 ${totalLines} 之间`);
+            return;
+        }
+
+        this.txtReader.jumpToLine(lineNum);
+        this.updateDisplay();
+        this.updateTooltip();
+        this.showStatusMessage(`第 ${this.txtReader.getCurrentIndex()} / ${this.txtReader.getTotalLines()} 行`);
+    }
+
+    /**
+     * 检查是否已加载文件
+     */
+    public hasFile(): boolean {
+        return this.txtReader.hasFile();
+    }
+
+    /**
+     * 获取总行数
+     */
+    public getTotalLines(): number {
+        return this.txtReader.getTotalLines();
+    }
 }
 
 // 需要引入 path 模块用于获取文件名

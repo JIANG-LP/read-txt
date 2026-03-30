@@ -199,6 +199,50 @@ function registerCommands(context: vscode.ExtensionContext) {
             }
         })
     );
+
+    // 跳转到指定行
+    context.subscriptions.push(
+        vscode.commands.registerCommand('txtReader.jumpToLine', async () => {
+            if (!statusBarManager) {
+                return;
+            }
+
+            if (!statusBarManager.hasFile()) {
+                vscode.window.showWarningMessage('请先选择一个 TXT 文件');
+                return;
+            }
+
+            const totalLines = statusBarManager.getTotalLines();
+            
+            try {
+                const input = await vscode.window.showInputBox({
+                    prompt: `请输入要跳转的行号 (1-${totalLines})`,
+                    placeHolder: `例如：${Math.floor(totalLines / 2)}`,
+                    validateInput: (value) => {
+                        const lineNum = parseInt(value);
+                        if (isNaN(lineNum)) {
+                            return '请输入有效的数字';
+                        }
+                        if (lineNum < 1 || lineNum > totalLines) {
+                            return `行号必须在 1 到 ${totalLines} 之间`;
+                        }
+                        return null;
+                    }
+                });
+
+                if (input) {
+                    const lineNum = parseInt(input);
+                    if (!isNaN(lineNum)) {
+                        statusBarManager.jumpToLine(lineNum);
+                        vscode.window.showInformationMessage(`已跳转到第 ${lineNum} 行`);
+                    }
+                }
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : '未知错误';
+                vscode.window.showErrorMessage(`跳转失败：${errorMessage}`);
+            }
+        })
+    );
 }
 
 /**
