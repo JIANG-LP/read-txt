@@ -47,6 +47,10 @@
       {
         "command": "txtReader.toggleAutoPage",
         "title": "TXT Reader: 切换自动翻页"
+      },
+      {
+        "command": "txtReader.jumpToLine",
+        "title": "TXT Reader: 跳转到指定行"
       }
     ],
     "keybindings": [
