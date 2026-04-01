@@ -2,9 +2,9 @@
   "name": "read-txt",
   "displayName": "TXT Status Bar Reader",
   "description": "在 VSCode 状态栏中显示 TXT 文件内容，支持逐行切换和快捷键控制",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "read-txt",
-  "icon": "src/images/icon.png",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/JIANG-LP/read-txt.git"
@@ -16,7 +16,15 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:txtReader.toggleStatus",
+    "onCommand:txtReader.selectFile",
+    "onCommand:txtReader.previousLine",
+    "onCommand:txtReader.nextLine",
+    "onCommand:txtReader.toggleAutoPage",
+    "onCommand:txtReader.jumpToLine",
+    "onCommand:txtReader.showStatus",
+    "onCommand:txtReader.hideStatus"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -112,13 +120,10 @@
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts"
   },
-  "dependencies": {
-    "iconv-lite": "^0.6.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.74.0",
-    "@types/iconv-lite": "^0.0.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
