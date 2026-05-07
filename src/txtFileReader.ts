@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as iconv from 'iconv-lite';
 
 /**
  * 支持的编码列表
@@ -78,43 +77,11 @@ export class TxtFileReader {
      */
     private readFileWithEncodingDetection(): void {
         try {
-            // 首先尝试 UTF-8
-            const contentUtf8 = fs.readFileSync(this.filePath);
-            
-            // 检查是否有 BOM 头
-            if (contentUtf8.length >= 3 && 
-                contentUtf8[0] === 0xEF && 
-                contentUtf8[1] === 0xBB && 
-                contentUtf8[2] === 0xBF) {
-                // UTF-8 with BOM
-                this.currentEncoding = 'utf8';
-                this.parseContent(contentUtf8.toString('utf8'));
-                console.log(`检测到 UTF-8 with BOM 编码`);
-                return;
-            }
+            const content = fs.readFileSync(this.filePath, 'utf8');
 
-            // 尝试用不同编码解码并检测乱码
-            for (const encoding of SUPPORTED_ENCODINGS) {
-                try {
-                    const content = iconv.decode(contentUtf8, encoding);
-                    
-                    // 检测是否包含有效中文字符且无乱码
-                    if (this.isValidChineseText(content)) {
-                        this.currentEncoding = encoding;
-                        this.parseContent(content);
-                        console.log(`自动检测到编码：${encoding}`);
-                        return;
-                    }
-                } catch (e) {
-                    // 跳过无法解码的编码
-                    continue;
-                }
-            }
-
-            // 如果都没有检测到，默认使用 UTF-8
             this.currentEncoding = 'utf8';
-            this.parseContent(contentUtf8.toString('utf8'));
-            console.log('使用默认 UTF-8 编码');
+            this.parseContent(content);
+            console.log('使用 UTF-8 编码读取文件');
             
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : '未知错误';
@@ -318,19 +285,16 @@ export class TxtFileReader {
      * @param encoding 编码格式
      */
     public reloadWithEncoding(encoding: string): void {
-        if (!SUPPORTED_ENCODINGS.includes(encoding)) {
-            throw new Error(`不支持的编码格式：${encoding}`);
-        }
 
         try {
-            const buffer = fs.readFileSync(this.filePath);
-            const content = iconv.decode(buffer, encoding);
-            this.currentEncoding = encoding;
+            // 使用 VSCode 内置的文件读取功能
+            const content = fs.readFileSync(this.filePath, 'utf8');
+            this.currentEncoding = 'utf8';
             this.parseContent(content);
-            console.log(`使用指定编码重新加载：${encoding}`);
+            console.log(`使用 UTF-8 编码重新加载`);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : '未知错误';
-            throw new Error(`使用编码 ${encoding} 读取失败：${errorMessage}`);
+            throw new Error(`读取文件失败：${errorMessage}`);
         }
     }
 
